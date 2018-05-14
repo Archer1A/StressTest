@@ -16,10 +16,10 @@ spec:
     resources:
       limits:
         cpu: "{{cpu_num}}"
-        memory: {{men_size}}
+        memory: {{mem_size}}
       requests:
         cpu: "{{cpu_num}}"
-        memory: "{{men_size}}"
+        memory: "{{mem_size}}"
     command:s
     - "/bin/sh"
     - "-ec"
