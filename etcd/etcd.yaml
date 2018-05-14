@@ -15,12 +15,12 @@ spec:
     name: etcd
     resources:
       limits:
-        cpu: "1"
-        memory: 1G
+        cpu: "4"
+        memory: "4G"
       requests:
-        cpu: "1"
-        memory: "1G"
-    command:s
+        cpu: "4"
+        memory: "4G"
+    command:
     - "/bin/sh"
     - "-ec"
     - |
@@ -44,13 +44,9 @@ spec:
       name: etcdlog
   hostNetwork: true
   volumes:
-  - hostPath:
-      path: /var/lib/stress-test-etcd
-      type: DirectoryOrCreate
+  - emptyDir: {}
     name: etcd
-  - hostPath:
-      path: /var/log/stress-test-apollo
-      type: DirectoryOrCreate
+  - emptyDir: {}
     name: etcdlog
   nodeSelector:
     slave: "3"

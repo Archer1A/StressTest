@@ -6,7 +6,7 @@ import csv
 
 import time
 
-from etcd.etcdPrepare import generate_template as generate_template
+from etcdPrepare import generate_template as generate_template
 import os
 
 st = """
@@ -72,9 +72,9 @@ class EtcdStress(object):
         config["cpu_num"] = self.cpu
         config["mem_size"] = self.memory
         generate_template(temp, file2, config)
-        os.popen("kubectl delete -f etcd.yam")
+        os.popen("kubectl delete -f etcd.yaml")
         time.sleep(60)
-        os.popen("kubectl create -f etcd.yam")
+        os.popen("kubectl create -f etcd.yaml")
         time.sleep(60)
 
     def save_test_result(self, clients, keys):
@@ -84,16 +84,16 @@ class EtcdStress(object):
         :param keys: 插入key的数目
         :return: None
         """
-        # cmd = r"""./benchmark --endpoints=http://8.16.0.33:20381 --target-leader --conns=1000 --clients=%d  \
-        #      put --key-size=8 --sequential-keys --total=%d --val-size=256 """ % (clients, keys)
-        # response = str(os.popen(cmd).read())
+        cmd = r"""../.././benchmark --endpoints=http://8.16.0.33:20381 --target-leader --conns=1000 --clients=%s  \
+              put --key-size=8 --sequential-keys --total=%s --val-size=256 """ % (clients, keys)
+        response = str(os.popen(cmd).read())
         detail = re.compile("[a-zA-Z/]+:\s+([0-9\.]+)")
         time_out_re = re.compile(r"\[(\d+)\]\s+[a-z,A-Z]+: request timed out")
-        matchs = detail.findall(st)
+        matchs = detail.findall(response)
         result = "%s,%s,%s,%s" % (keys, self.cpu, self.memory, clients)
         for match in matchs[:-1]:
             result += ",%s" % (match)
-        time_out = time_out_re.search(st)
+        time_out = time_out_re.search(response)
         if time_out is not None:
             result += ",%s\n"%(time_out).group(1)
         else:
@@ -114,5 +114,5 @@ class EtcdStress(object):
                 self.update_etcd()
             self.save_test_result(test_case["clients"], test_case["keys"])
 
-etcd = EtcdStress(1, "1Gi")
+etcd = EtcdStress(1, "1G")
 etcd.run_test("2018-5-10集群压力测试测试用例.csv")

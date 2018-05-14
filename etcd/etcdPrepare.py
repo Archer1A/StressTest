@@ -1,9 +1,9 @@
 #coding=utf-8
-import configparser
+#import configparser
 import os
 import re
 import io
-import argparse
+#import argparse
 
 # base_dir = os.path.dirname(os.path.abspath(__file__))
 # parser = argparse.ArgumentParser(description='Generate *.cm.yaml')
@@ -72,5 +72,4 @@ file2 = "./etcd.yaml"
 config = {}
 config["cpu_num"] = "2"
 config["mem_size"] = "1Gi"
-print(config["cpu_num"])
 generate_template(file1, file2, config)
