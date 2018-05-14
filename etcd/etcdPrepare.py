@@ -49,7 +49,6 @@ def render_template(tmpl, config):
     hostname='test\ntest'
 
     {{hostname}} -> 'test\ntest'
-    {{4 hostname}} -> 'test\n    test'
     """
     matches = variable.findall(tmpl)
     for match in matches:
@@ -67,9 +66,3 @@ def generate_template(tmpl, dest, config):
             dest.write(render_template(tmpl.read(), config))
 
 
-file1 = "./templates/etcd.yaml"
-file2 = "./etcd.yaml"
-config = {}
-config["cpu_num"] = "2"
-config["mem_size"] = "1Gi"
-generate_template(file1, file2, config)
