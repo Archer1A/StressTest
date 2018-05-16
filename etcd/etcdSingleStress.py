@@ -3,18 +3,28 @@
 
 import re
 import csv
-
 import time
+import argparse
 
 from etcdPrepare import generate_template as generate_template
 import os
 
+#创建命令行参数
+parse = argparse.ArgumentParser()
+parse.add_argument("-f", dest="test_case", default="/var/run/stress.csv", help="path of test case")
+parse.add_argument("-e", dest="endpoint", default="http://apollo-etcd.stress-test:2379", help="path of endpoint")
+parse.add_argument("-o", dest="result", default="/var/log/result", help="path of result")
+parse.add_argument("-c", dest="conn_num", default="/1000", help = "connection num")
+parse.add_argument("-s", dest="cluster", default=False, help = "single is Flase else True")
+args = parse.parse_args()
 
 class EtcdStress(object):
 
-    def __init__(self, cpu, memory):
+    def __init__(self, cpu, memory, endpoint, is_cluster):
         self.cpu = cpu
         self.memory = memory
+        self.endpoint = endpoint
+        self.cluster = is_cluster
 
     def read_test_case(self, file_name):
         """
@@ -49,8 +59,8 @@ class EtcdStress(object):
         :param keys: 插入key的数目
         :return: None
         """
-        cmd = r"""../.././benchmark --endpoints=http://8.16.0.33:20381 --target-leader --conns=1000 --clients=%s  \
-              put --key-size=8 --sequential-keys --total=%s --val-size=256 """ % (clients, keys)
+        cmd = r"""../../benchmark --endpoints=%s  --conns=%s --clients=%s  \
+              put --key-size=8 --sequential-keys --total=%s --val-size=256 """ % (self.endpoint,args.conn_num, clients, keys)
         response = str(os.popen(cmd).read())
         detail = re.compile("[a-zA-Z/]+:\s+([0-9\.]+)")
         time_out_re = re.compile(r"\[(\d+)\]\s+[a-z,A-Z]+: request timed out")
@@ -63,7 +73,7 @@ class EtcdStress(object):
             result += ",%s\n"%(time_out).group(1)
         else:
             result += ",%s\n" % ("0")
-        with open("log.csv", 'a') as log:
+        with open(args.result+"/log.csv", 'a') as log:
             log.write(result)
 
     def run_test(self, test_cases_file):
@@ -72,12 +82,14 @@ class EtcdStress(object):
         :return:
         """
 
-        for test_case in etcd.read_test_case(test_cases_file):
-            if test_case["cpu"] != self.cpu or test_case["memory"] != self.memory:
-                self.cpu = test_case["cpu"]
-                self.memory = test_case["memory"]
-                self.update_etcd()
+        for test_case in self.read_test_case(test_cases_file):
+            if self.cluster is False:
+                if test_case["cpu"] != self.cpu or test_case["memory"] != self.memory:
+                    self.cpu = test_case["cpu"]
+                    self.memory = test_case["memory"]
+                    self.update_etcd()
             self.save_test_result(test_case["clients"], test_case["keys"])
 
-etcd = EtcdStress(1, "1G")
-etcd.run_test("2018-5-10集群压力测试测试用例.csv")
+etcd = EtcdStress(1, "1G", args.endpoint, args.cluster)
+etcd.run_test(args.test_case)
+
