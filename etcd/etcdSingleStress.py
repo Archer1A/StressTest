@@ -9,41 +9,6 @@ import time
 from etcdPrepare import generate_template as generate_template
 import os
 
-st = """
-^M 0 / 1 B                                                                                                     !   0.00%
-^M 1 / 1 Booooooooooooooooooooo
-oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo! 100.00%0s
-
-Summary:
-  Total:        0.0109 secs.
-  Slowest:      0.0101 secs.
-  Fastest:      0.0101 secs.
-  Average:      0.0101 secs.
-  Stddev:       0.0000 secs.
-  Requests/sec: 91.3496
-
-Response time histogram:
-  0.0101 [1]    |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-  0.0101 [0]    |
-
-Latency distribution:
-Error distribution:
-  [8]	rpc error: code = Unavailable desc = the server stops accepting new RPCs
-  [1]	rpc error: code = Unavailable desc = transport is closing
-
-
-
-"""
-
 
 class EtcdStress(object):
 
