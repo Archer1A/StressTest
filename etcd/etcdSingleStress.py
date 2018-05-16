@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
+"""
+用于运行etcd 单机和集群的压力测试
+"""
 
 import re
 import csv
@@ -14,7 +17,7 @@ parse = argparse.ArgumentParser()
 parse.add_argument("-f", dest="test_case", default="/var/run/stress.csv", help="path of test case")
 parse.add_argument("-e", dest="endpoint", default="http://apollo-etcd.stress-test:2379", help="path of endpoint")
 parse.add_argument("-o", dest="result", default="/var/log/result", help="path of result")
-parse.add_argument("-c", dest="conn_num", default="/1000", help = "connection num")
+parse.add_argument("-c", dest="conn_num", default="1000", help = "connection num")
 parse.add_argument("-s", dest="cluster", default=False, help = "single is Flase else True")
 args = parse.parse_args()
 
@@ -67,7 +70,7 @@ class EtcdStress(object):
         matchs = detail.findall(response)
         result = "%s,%s,%s,%s" % (keys, self.cpu, self.memory, clients)
         for match in matchs[:-1]:
-            result += ",%s" % (match)
+            result += ",%s" %       (match)
         time_out = time_out_re.search(response)
         if time_out is not None:
             result += ",%s\n"%(time_out).group(1)
